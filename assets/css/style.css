@@ -503,6 +503,26 @@ section[hidden]{display:none!important}
 /* =====================================================================
    RESPONSIVE
    ===================================================================== */
+
+/* desktop: vertical side menu (editorial sidebar) */
+@media (min-width:981px){
+  body{padding-left:210px}
+  .nav,.nav.is-scrolled{
+    flex-direction:column;align-items:stretch;justify-content:flex-start;
+    top:0;left:0;bottom:0;right:auto;width:210px;height:100vh;
+    padding:36px 26px;gap:1.3rem;
+    background:rgba(250,248,244,.94);backdrop-filter:blur(10px);
+    border-right:1px solid rgba(115,131,107,.2);box-shadow:none;
+  }
+  .nav__brand{font-size:2.9rem;margin-bottom:1.6rem;line-height:.9}
+  .nav__links{flex-direction:column;align-items:flex-start;gap:1.15rem;flex-wrap:nowrap}
+  .nav__links a{font-size:.96rem;letter-spacing:.04em}
+  .nav__actions{margin-top:auto;justify-content:flex-start}
+  .nav__burger{display:none}
+  .nowplaying{left:230px}
+  .hero__botanic--tl{top:36px}
+}
+
 @media (max-width:880px){
   .nav__links{
     position:fixed;inset:0 0 0 auto;width:min(80vw,320px);height:100vh;
