@@ -240,6 +240,10 @@ h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.12;color:var(--f
 .venue__facts{list-style:none;margin:0 0 1.8rem}
 .venue__facts li{display:flex;gap:1rem;padding:.7rem 0;border-bottom:1px dashed rgba(115,131,107,.3);font-family:var(--serif);font-size:1.2rem}
 .venue__facts span{min-width:70px;text-transform:uppercase;letter-spacing:.18em;font-family:var(--body);font-size:.66rem;color:var(--olive);align-self:center}
+.calendar{margin-top:1.6rem}
+.calendar__label{text-transform:uppercase;letter-spacing:.18em;font-size:.72rem;color:var(--olive);margin-bottom:.7rem;font-family:var(--body)}
+.calendar__btns{display:flex;gap:.7rem;flex-wrap:wrap}
+.calendar__btns .btn{padding:.7em 1.3em;font-size:.78rem}
 .venue__map{border-radius:var(--radius);overflow:hidden;border:1px solid rgba(115,131,107,.3);box-shadow:var(--shadow)}
 .venue__map iframe{display:block;width:100%;height:380px;border:0;filter:saturate(.85) contrast(.96)}
 

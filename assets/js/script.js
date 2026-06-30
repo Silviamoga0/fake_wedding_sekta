@@ -241,19 +241,85 @@
   })();
 
   /* =====================================================================
-     AMBIENT MUSIC
+     BACKGROUND MUSIC — Los Chikos del Maíz, "La Vida Sense Tu" (YouTube)
      ===================================================================== */
   (function music() {
-    const btn = $("#musicToggle"), audio = $("#ambientAudio");
-    if (!btn || !audio) return;
-    audio.volume = 0.4;
-    btn.addEventListener("click", async () => {
-      if (audio.paused) {
-        try { await audio.play(); btn.classList.add("is-playing"); btn.title = "Atura la música"; }
-        catch (e) { btn.title = "No s'ha pogut reproduir"; }
-      } else {
-        audio.pause(); btn.classList.remove("is-playing"); btn.title = "Música ambiental";
-      }
+    const btn = $("#musicToggle");
+    if (!btn) return;
+    const VIDEO_ID = "Ug8_GdUUjug"; // ← per canviar la cançó, posa aquí l'ID del vídeo de YouTube
+    let player = null, ready = false, wantPlay = false;
+
+    // load the YouTube IFrame API
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+
+    window.onYouTubeIframeAPIReady = function () {
+      player = new YT.Player("ytPlayer", {
+        videoId: VIDEO_ID,
+        playerVars: { autoplay: 0, controls: 0, loop: 1, playlist: VIDEO_ID, playsinline: 1, modestbranding: 1, rel: 0 },
+        events: {
+          onReady: () => { ready = true; try { player.setVolume(55); } catch (e) {} if (wantPlay) player.playVideo(); },
+          onStateChange: (e) => {
+            const playing = e.data === YT.PlayerState.PLAYING;
+            btn.classList.toggle("is-playing", playing);
+            btn.title = playing ? "Atura la música" : "Música de fons";
+          }
+        }
+      });
+    };
+
+    btn.addEventListener("click", () => {
+      if (!ready || !player) { wantPlay = true; btn.classList.add("is-playing"); return; }
+      const st = player.getPlayerState();
+      if (st === YT.PlayerState.PLAYING) player.pauseVideo();
+      else player.playVideo();
+    });
+  })();
+
+  /* =====================================================================
+     ADD TO CALENDAR — Google Calendar link + .ics download
+     ===================================================================== */
+  (function calendar() {
+    const gcal = $("#gcalLink"), ics = $("#icsBtn");
+    if (!gcal && !ics) return;
+    const ev = {
+      title: "Casament d'Andreu & Ventu 💍",
+      location: "Can Cugulada",
+      details: "Ens casem! Veniu a celebrar-ho amb nosaltres a Can Cugulada. Recepció a les 18:00 i cerimònia a les 19:00.",
+      // 27 Aug 2026, 18:00–02:00 CEST (UTC+2) → UTC
+      startUTC: "20260827T160000Z",
+      endUTC: "20260828T000000Z"
+    };
+    if (gcal) {
+      const p = new URLSearchParams({
+        action: "TEMPLATE", text: ev.title,
+        dates: `${ev.startUTC}/${ev.endUTC}`,
+        details: ev.details, location: ev.location
+      });
+      gcal.href = "https://calendar.google.com/calendar/render?" + p.toString();
+    }
+    if (ics) ics.addEventListener("click", () => {
+      const stamp = new Date().toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+      const lines = [
+        "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Andreu i Ventu//Casament//CA",
+        "CALSCALE:GREGORIAN", "BEGIN:VEVENT",
+        "UID:casament-andreu-ventu-2026@github.io",
+        "DTSTAMP:" + stamp,
+        "DTSTART:" + ev.startUTC, "DTEND:" + ev.endUTC,
+        "SUMMARY:" + ev.title,
+        "DESCRIPTION:" + ev.details,
+        "LOCATION:" + ev.location,
+        "BEGIN:VALARM", "TRIGGER:-P1D", "ACTION:DISPLAY",
+        "DESCRIPTION:Demà ens casem!", "END:VALARM",
+        "END:VEVENT", "END:VCALENDAR"
+      ];
+      const blob = new Blob([lines.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = "casament-andreu-ventu.ics";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     });
   })();
 
